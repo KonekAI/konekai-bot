@@ -7,7 +7,7 @@ from slackeventsapi import SlackEventAdapter
 import slack_sdk
 
 from flask import Flask, request, Response
-import openAPI as ai 
+import openAI as ai 
 #####################################################################
 #setup web server
 app = Flask(__name__)
@@ -82,8 +82,7 @@ def qna():
                                 )
     else:        
         # pass text to the AI funciton
-        ans = ai.puppyTest()[0]
-        # ans = ai.askOpenAI(text)[0]
+        ans = ai.toHackTest(text)[0]
         client.chat_postMessage(channel=user_id, 
                                 text= text, 
                                 blocks = answerFormat(question = text, answer = ans)
