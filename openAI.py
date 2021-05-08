@@ -1,12 +1,17 @@
 import requests
 import wikipedia
 import re
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv(dotenv_path=Path('.')/'.env')
+openAI = os.environ['OPEN_AI']
 
 
 def puppyTest():
     url = 'https://api.openai.com/v1/answers'
-    
+
     openAI = os.environ['OPEN_AI']
     headers = {'Authorization': f'Bearer {openAI}'}
 
@@ -30,10 +35,10 @@ def puppyTest():
 
 def toHackTest(question: str):
     url = 'https://api.openai.com/v1/answers'
-    
+
     openAI = os.environ['OPEN_AI']
     headers = {'Authorization': f'Bearer {openAI}'}
-    
+
     payload = {
         "documents": ["TOHacks is a student-run organization affiliated with the University of Toronto.",
                       "TOHacks hosted a virtual hackathon for participants to compete in on May 8th and May 9th in 2021.",
@@ -69,7 +74,6 @@ def storyTest(question: str):
     openAI = os.environ['OPEN_AI']
     headers = {'Authorization': f'Bearer {openAI}'}
 
-
     payload = {
         "documents": [story],
         "question": question,
@@ -99,16 +103,14 @@ def parseWikiText(wikiTitle: str):
     return text
 
 
-
-def pyTest(question: str):
+def getOpenAIAnswer(question: str, wikiPrompt: str):
     openAI = os.environ['OPEN_AI']
     headers = {'Authorization': f'Bearer {openAI}'}
-
 
     url = 'https://api.openai.com/v1/answers'
 
     payload = {
-        "documents": [parseWikiText("Python (programming language)")],
+        "documents": [parseWikiText(wikiPrompt)],
         "question": question,
         "search_model": "ada",
         "model": "curie",
@@ -122,8 +124,13 @@ def pyTest(question: str):
     return (response.json()["answers"])
 
 
-print(pyTest("What does Python code emphasize?"))
-print(pyTest("When was Python 3.0 released?"))
-print(pyTest("How does Python delimit blocks of code?"))
-print(pyTest("How do I write a Hello World function in Python?"))
-print(pyTest("Does Python check for type errors at compile time?"))
+print(getOpenAIAnswer("What does Python code emphasize?",
+      "Python (programming language)"))
+print(getOpenAIAnswer("When was Python 3.0 released?",
+      "Python (programming language)"))
+print(getOpenAIAnswer("How does Python delimit blocks of code?",
+      "Python (programming language)"))
+print(getOpenAIAnswer("How do I write a Hello World function in Python?",
+      "Python (programming language)"))
+print(getOpenAIAnswer("Does Python check for type errors at compile time?",
+      "Python (programming language)"))
