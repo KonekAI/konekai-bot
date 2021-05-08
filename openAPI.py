@@ -16,15 +16,26 @@ response = openai.Completion.create(
 
 curl https://api.openai.com/v1/engines/davinci/completions -H "Content-Type: application/json" -H "Authorization: Bearer insertKeyHere" -d '{"prompt": "This is a test", "max_tokens": 5}'
 '''
-
+import os
+import openai
 import requests
 
-url = 'https://api.openai.com/v1/answers'
-headers = {
-    'Authorization': 'Bearer insertKeyHere'}
+
+def askOpenAI(question):
+    url = 'https://api.openai.com/v1/answers'
+    openAI = os.environ['OPEN_AI']
+    headers = {'Authorization': f'Bearer {openAI}'}
+
+    
+    response = requests.post(url, headers=headers, json=question)
+    return (response.json()["answers"])
+
 
 
 def puppyTest():
+    url = 'https://api.openai.com/v1/answers'
+    openAI = os.environ['OPEN_AI']
+    headers = {'Authorization': f'Bearer {openAI}'}
     payload = {
         "documents": ["Puppy A is happy.", "Puppy B is sad."],
         "question": "which puppy is happy?",
@@ -37,7 +48,7 @@ def puppyTest():
     }
 
     response = requests.post(url, headers=headers, json=payload)
+    print(response.json()["answers"])
     return (response.json()["answers"])
 
 
-print(puppyTest())
