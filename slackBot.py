@@ -9,7 +9,7 @@ import slack_sdk
 
 from flask import Flask, request, Response
 import openAI as ai 
-import validators
+
 
 #####################################################################
 #setup web server
@@ -17,6 +17,7 @@ app = Flask(__name__)
 
 # load slack tokens from the .env file
 load_dotenv(dotenv_path = Path('.') / '.env')
+os.environ['SLACK_BOT_TOKEN']
 #setup webClient 
 client = slack_sdk.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 # slack_events_adapter = SlackEventAdapter(os.environ['SIGNING_SECRET'],'/slack/events', app)
@@ -25,13 +26,7 @@ client = slack_sdk.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 # Support funcitons 
 
 BOT_ID = client.api_call("auth.test")['user_id']
-
-games = {'coup': 'https://coup.thebrown.net/ ',
-         'Spyfall' : 'https://spyfall.adrianocola.com/', 
-         'CodeName': 'https://www.horsepaste.com/', 
-         'Gather town': 'https://gather.town/app',
-         'Skribbl.io': 'https://skribbl.io/' 
-    }
+wikiArticle = ''
 
 def answerFormat(question, answer):
     return [{
@@ -45,7 +40,8 @@ def answerFormat(question, answer):
                 )
             }
     }]
-def gameFormat(game_name, link):
+    
+def wikianswerFormat(game_name, link):
     return [{
         'type': 'section',
         'text': {
@@ -56,14 +52,6 @@ def gameFormat(game_name, link):
                 )
             }
     }]
-def validURL(url:str):
-    if url == '':
-        return False
-    
-    if (validators.url(url)):
-        return True
-    else:
-        return False
 #####################################################################
 # authorization
 @app.route("/oauthButton", methods=["GET"])
@@ -116,6 +104,31 @@ def qna():
                                 )
     return Response(), 200
 
+@app.route('/wiki-read', methods=['POST'])
+def get_wiki_article():
+    payload = request.form
+    channel_id = payload.get('channel_id')
+    user_id = payload.get('user_id')
+    text = payload.get('text')
+
+    if text == '':
+        client.chat_postMessage(channel= user_id, 
+                                text= "Sorry, you did not give me a article name. You can write the name after the command, for example (/wiki-article Java_(programming_language))" 
+                                ) 
+    
+    try:
+        client.chat_postMessage(channel= channel_id, 
+                        text= f"I have read the wiki article{text}, feel free to ask me anything! (use /wiki-forget once you are done with this article)" 
+                        )
+        wikiArticle = text
+
+     except:
+         client.chat_postMessage(channel= user_id, 
+                             text= "I was not invited to that channel. Please invite me via /invite @konekai bot so I can write to the channel!", 
+                             )
+    return Response(), 200
+
+
 @app.route('/wiki-qna', methods=['POST'])
 def wiki():
     payload = request.form
@@ -129,6 +142,7 @@ def wiki():
                                 ) 
         return Response(), 200
 
+     
 
     #find url in string and check if it is valud
     regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/))"
@@ -138,21 +152,20 @@ def wiki():
             url = x
             break
 
-    if url == '':
-        client.chat_postMessage(channel=user_id, 
-                                text= ans, 
-                                blocks = answerFormat(question = text, answer = ans)
-                                )
-        
-    else validURL(text):        
-        # pass text to the AI funciton
-        ans = ai.toHackTest(url)
-        client.chat_postMessage(channel=user_id, 
-                                text= ans, 
-                                blocks = answerFormat(question = text, answer = ans)
-                                )
     return Response(), 200
 
+
+# def gameFormat(game_name, link):
+#     return [{
+#         'type': 'section',
+#         'text': {
+#             'type':'mrkdwn',
+#              'text': (
+#                 f'*{game_name}* \n\n'
+#                 f'{game_name} seems to be a fun social game that you can play online. Here, I suggest trying the game out on this site: {link}'
+#                 )
+#             }
+#     }]
 # import random
 # @app.route('/game-suggestion', methods=['POST'])
 # def games():

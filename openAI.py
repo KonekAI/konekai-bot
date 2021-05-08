@@ -103,12 +103,12 @@ def parseWikiText(wikiTitle: str):
 def pyTest(question: str):
     openAI = os.environ['OPEN_AI']
     headers = {'Authorization': f'Bearer {openAI}'}
-
+    parseWikiText("Python (programming language)")
 
     url = 'https://api.openai.com/v1/answers'
 
     payload = {
-        "documents": [parseWikiText("Python (programming language)")],
+        "documents": [],
         "question": question,
         "search_model": "ada",
         "model": "curie",
