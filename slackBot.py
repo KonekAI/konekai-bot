@@ -47,9 +47,8 @@ def wikiAnswerFormat(wikiPrompt, question, answer):
             'type':'mrkdwn',
              'text': (
                 '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
-                f'According to {wikiPrompt}* \n\n'
                 f'*Q:* {question} \n\n'
-                f'*A:* {answer}'
+                f'*A:* According to this article about *{wikiPrompt}*... {answer}'
                 )
             }
     }]
@@ -138,8 +137,8 @@ def set_wiki_article():
                                     'type':'mrkdwn',
                                     'text': (
                                         '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
-                                        f'I have read the wiki article *{text}*, feel free to ask me anything via */wiki-qna*! \n'
-                                        '(use */wiki-forget* once you are done with this article)'                                        )
+                                        f'I have read the wiki article *{text}*, feel free to ask me anything via */wiki-qna*! (use */wiki-forget* once you are done with this article)'                                        
+                                        )
                                     }
                             }]
                         )
@@ -196,10 +195,10 @@ def wiki_qna():
     text = payload.get('text')
     
     if text == '':
-    client.chat_postMessage(channel=user_id, 
-                            text= "You did not ask me a queston. You can write your question after the command, for example (/wiki-qna who founded Java?)" 
-                            ) 
-    return Response(), 200
+        client.chat_postMessage(channel=user_id, 
+                                text= "You did not ask me a queston. You can write your question after the command, for example (/wiki-qna who founded Java?)" 
+                                ) 
+        return Response(), 200
 
     f = open("wiki_article.txt", "r")
     wikiArticle = f.read()
@@ -226,14 +225,15 @@ def gameFormat(game_name, link):
         'text': {
             'type':'mrkdwn',
              'text': (
-                '*Shhh, this is a hidden feature ;)* \n'
-                f'*{game_name}* \n\n'
+                 '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
+                'Shhh, this is a hidden feature ;) \n'
+                f'*Game Suggestion: {game_name}* \n\n'
                 f'{game_name} seems to be a fun social game that you can play online. Here, I suggest trying the game out on this site: {link}'
                 )
             }
     }]
 import random
-@app.route('/game-suggestion', methods=['POST'])
+@app.route('/game-recommendation', methods=['POST'])
 def games():
     payload = request.form
     channel_id = payload.get('channel_id')
