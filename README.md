@@ -1,3 +1,7 @@
+# TL;DR
+https://drive.google.com/file/d/1bIkpbRhtAWEqG5EWnkZ6BkNHQfQXPytb/view
+https://konekai.herokuapp.com/
+
 # Inspiration
 
 Our team wanted to build a bot that connected people working from home through a responsive collaborative measure. Working in group settings can be difficult, especially given a lack of information on a given topic and deficiencies in the research process among team members. To resolve this issue, our team created Konek AI. 
