@@ -1,4 +1,5 @@
 # TL;DR
+Click here to see the bot in action:
 https://drive.google.com/file/d/1bIkpbRhtAWEqG5EWnkZ6BkNHQfQXPytb/view
 
 https://konekai.herokuapp.com/
